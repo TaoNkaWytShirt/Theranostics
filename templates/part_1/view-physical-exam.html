@@ -3,35 +3,126 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class = "container-fluid">
-    <h1 class="title">Physical Exam of {{patient.name | title}}</h1>
-    {% if list %}
-    {% else %}
-    <a href="{% url 'addPhysicalExam' patient.slug %}" class="mr-1"><button href="{% url 'addPhysicalExam' patient.slug %}" style="margin-top: 20px;"class="btn btn-success" type="button">Add Physical Exam</button></a>
-    {% endif %}
-    <div class = "container-fluid mt-4 table-container">
-        {% if list %}
-        Height: {{list.height}}
-        <br>
-        Weight: {{list.weight}}
-
-        BMI: {{list.weight}}
-        <br>
-        Blood Pressure (systolic/diastolic): {{list.bp}}
-        <br> 
-        Heart Rate: {{list.hr}}
-        <br>
-        ECOG Score: {{list.ecog_score}}
-        <br>
-        Pain Score: {{list.pain_score}}
-        <br>
-        Local Symptoms: {{list.local_symptoms}}
-        <br>
-        Systemic Symptoms: {{list.systemic_symptoms}}
-        {% endif %}
-      <div class="row border-bottom bg-white p-3 ">
+<div class="container-fluid">
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-    </div>
+        {% endfor %}
+    {% endif %}
 
+    <h1 class="title">Physical Exam of {{patient.name | title}}</h1>
+    
+    <div class="container-fluid mt-4 table-container">
+        {% if list %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Physical Measurements</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Height</th>
+                                    <td>{% if list.height %}{{ list.height }} cm{% else %}Not recorded{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Weight</th>
+                                    <td>{% if list.weight %}{{ list.weight }} kg{% else %}Not recorded{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>BMI</th>
+                                    <td>{% if list.bmi %}{{ list.bmi }}{% else %}Not calculated{% endif %}</td>
+                                </tr>
+                            </table>
+
+                            <h5>Vital Signs</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Blood Pressure</th>
+                                    <td>{% if list.bp %}{{ list.bp }} mmHg{% else %}Not recorded{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Heart Rate</th>
+                                    <td>{% if list.hr %}{{ list.hr }} bpm{% else %}Not recorded{% endif %}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5>Clinical Assessment</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>ECOG Score</th>
+                                    <td>{% if list.ecog_score %}{{ list.ecog_score }}{% else %}Not recorded{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Pain Score</th>
+                                    <td>{% if list.pain_score %}{{ list.pain_score }}/10{% else %}Not recorded{% endif %}</td>
+                                </tr>
+                            </table>
+
+                            <h5>Symptoms</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Local Symptoms</th>
+                                    <td>{% if list.local_symptoms %}{{ list.local_symptoms }}{% else %}None reported{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Systemic Symptoms</th>
+                                    <td>{% if list.systemic_symptoms %}{{ list.systemic_symptoms }}{% else %}None reported{% endif %}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'editPhysicalExam' patient.slug list.id %}" class="btn btn-primary">
+                            Edit Record
+                        </a>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">
+                            Delete Record
+                        </button>
+                        <a href="{% url 'patientDetails' patient.slug %}" class="btn btn-secondary">
+                            Back to Patient Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm Delete</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this physical exam record?</p>
+                            <p class="text-danger">This action cannot be undone.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <a href="{% url 'deletePhysicalExam' patient.slug list.id %}" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="alert alert-info">
+                No physical exam records found for this patient.
+            </div>
+            <a href="{% url 'addPhysicalExam' patient.slug %}" class="btn btn-success">
+                Add Physical Exam
+            </a>
+        {% endif %}
+    </div>
 </div>
 {% endblock content %}

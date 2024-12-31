@@ -35,30 +35,32 @@
                     <a href="{% url 'addPhysicalExam' patient.slug %}" class="mr-1"><button href="{% url 'addPhysicalExam' patient.slug %}" style="margin-top: 20px;"class="btn btn-success" type="button">Add Physical Exam</button></a>
                 {% endif %}
                 {% if physical_exam %}
-                    slug: {{ physical_exam.slug }}
-                    <br>
-                    Date of Physical Exam: {{ physical_exam.date_recorded }}
-                    <br>
-                    Height: {{physical_exam.height}}
-                    <br>
-                    Weight: {{physical_exam.weight}}
-                    <br>
-                    BMI: {{physical_exam.weight}}
-                    <br>
-                    Blood Pressure (systolic/diastolic): {{physical_exam.bp}}
-                    <br> 
-                    Heart Rate: {{physical_exam.hr}}
-                    <br>
-                    ECOG Score: {{physical_exam.ecog_score}}
-                    <br>
-                    Pain Score: {{physical_exam.pain_score}}
-                    <br>
-                    Local Symptoms: {{physical_exam.local_symptoms}}
-                    <br>
-                    Systemic Symptoms: {{physical_exam.systemic_symptoms}}
-                    <br>
-                    <a href="{% url 'editPhysicalExam' slug=patient.slug id=physical_exam.id %}" class="mr-1"><button href="{% url 'editPhysicalExam' slug=patient.slug id=physical_exam.id %}" style="margin-top: 20px;"class="btn btn-success" type="button">Edit</button></a>
-                    <button type="button" class="btn btn-danger mr-1" style="margin-top: 20px;" data-bs-toggle="modal" href="#deletePEPopup{{physical_exam.id}}">Delete</button>
+                    <div class="physical-exam-details">
+                        Date of Physical Exam: {{ physical_exam.date_recorded }}
+                        <br>
+                        Height: {{physical_exam.height}}
+                        <br>
+                        Weight: {{physical_exam.weight}}
+                        <br>
+                        BMI: {{physical_exam.bmi}}  <!-- Changed from weight to bmi -->
+                        <br>
+                        Blood Pressure (systolic/diastolic): {{physical_exam.bp}}
+                        <br> 
+                        Heart Rate: {{physical_exam.hr}}
+                        <br>
+                        ECOG Score: {{physical_exam.ecog_score}}
+                        <br>
+                        Pain Score: {{physical_exam.pain_score}}
+                        <br>
+                        Local Symptoms: {{physical_exam.local_symptoms}}
+                        <br>
+                        Systemic Symptoms: {{physical_exam.systemic_symptoms}}
+                        <br>
+                        <a href="{% url 'editPhysicalExam' slug=patient.slug id=physical_exam.id %}" class="btn btn-success mt-3">Edit</a>
+                        <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deletePEPopup{{physical_exam.id}}">
+                            Delete
+                        </button>
+                    </div>
                     <div class="modal fade" id="deletePEPopup{{physical_exam.id}}" tabindex="-1" role="dialog" aria-labelledby="deletePatientLabel" aria-hidden="true">
                         <div class="modal-dialog" style="display: flex; margin-top: 10%;" role="document">
                         <div class="modal-content">
@@ -69,11 +71,14 @@
                             </button>
                             </div>
                             <div class="modal-body">
-                            Delete this record?
+                                Are you sure you want to delete this physical exam record?
                             </div>
                             <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <a class="btn btn-danger" href="{% url 'deletePhysicalExam' slug=patient.slug id=physical_exam.id %}">Delete</a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form method="POST" action="{% url 'deletePhysicalExam' slug=patient.slug id=physical_exam.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
                             </div>
                         </div>
                         </div>
