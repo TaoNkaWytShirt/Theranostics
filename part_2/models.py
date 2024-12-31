@@ -1,6 +1,7 @@
 from django.db import models
 from part_1.models import *
 from multiselectfield import MultiSelectField
+from django.core.validators import MinValueValidator
 
 # class Equipment(models.Model):
 #     name = models.CharField(max_length=300,null=True)
@@ -25,13 +26,28 @@ class Therapy(models.Model):
     premedications = models.CharField(max_length=120, null=True, blank=True)
     medications = models.CharField(max_length=120, null=True, blank=True)
     furosemide = models.BooleanField()
-    systolic = models.IntegerField(blank=True, null=True)
-    diastolic = models.IntegerField(blank=True, null=True)
-    hr = models.IntegerField(blank=True, null=True)
-    rr = models.IntegerField(blank=True, null=True)
-    saturation = models.IntegerField(blank=True, null=True)
+    systolic = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
+    diastolic = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
+    hr = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
+    rr = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
+    saturation = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
     date_therapy = models.DateField()
     radiopharm = models.CharField(max_length=120, null=True, blank=True)
-    side_effects = MultiSelectField(max_length=120, choices = SIDE_EFFECTS)
+    side_effects = MultiSelectField(max_length=120, choices=SIDE_EFFECTS)
 
+    def clean(self):
+        if self.systolic is not None and self.systolic < 0:
+            raise ValidationError({'systolic': 'Systolic Blood Pressure Cannot Be Negative.'})
+        if self.diastolic is not None and self.diastolic < 0:
+            raise ValidationError({'diastolic': 'Diastolic Blood Pressure Cannot Be Negative.'})
+        if self.hr is not None and self.hr < 0:
+            raise ValidationError({'hr': 'Heart Rate Cannot Be Negative.'})
+        if self.rr is not None and self.rr < 0:
+            raise ValidationError({'rr': 'Respiratory Rate Cannot Be Negative.'})
+        if self.saturation is not None and self.saturation < 0:
+            raise ValidationError({'saturation': 'Oxygen Saturation Cannot Be Negative.'})
+        super().clean()
 
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
