@@ -15,13 +15,21 @@ class Patient(models.Model):
     #Test results and others are put to a different model
     name = models.CharField(max_length=120, blank= False, null=True)
     slug = models.SlugField(null=True)
-    age = models.IntegerField()
+    age = models.IntegerField(validators=[MinValueValidator(0, message="Age cannot be negative")])
     address = models.CharField(max_length=300)
     diagnosis_date = models.DateField()
     surgery_date = models.DateField()
     histopath_result = models.ImageField(upload_to="images/")
     histopath_details = models.TextField(max_length=200, blank=False, null=True)
-    gleason_score = models.IntegerField(blank=True, null=True)
+    gleason_score = models.IntegerField(
+        validators=[
+            MinValueValidator(6, message="Gleason score must be between 6 and 10"),
+            MaxValueValidator(10, message="Gleason score must be between 6 and 10")
+        ],
+        blank=True, 
+        null=True,
+        help_text="Enter a value between 6 and 10"
+    )
     date_of_treatment = models.DateField()
     type_of_treatment = models.CharField(max_length=120, choices=TYPE_TREATMENT)
 
@@ -215,4 +223,3 @@ class Screening(models.Model):
 
     assessment = models.CharField(max_length=120, choices=ASSESSMENT, blank=True, null=True)
     plan = models.TextField(max_length=120, blank=True, null=True)
- 

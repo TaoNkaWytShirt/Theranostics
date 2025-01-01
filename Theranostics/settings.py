@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-
-load_dotenv()
+import dotenv
+dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     'django_extensions'
 ]
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -64,7 +67,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 BOOTSTRAP3 = {
   'javascript_in_head': True,
 }
@@ -92,18 +94,21 @@ WSGI_APPLICATION = 'Theranostics.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'theranostics',
         'USER': 'root',
         'PASSWORD': '030404',
-        'HOST': 'localhost',  # or another host if using a remote DB
-        'PORT': '3306',  # Default MySQL port
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
-DATABASES['default'].update(db_from_env)
+
+# Update database configuration from $DATABASE_URL if available
+db_from_env = dj_database_url.config(conn_max_age=500, default='')
+if db_from_env:
+    DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
