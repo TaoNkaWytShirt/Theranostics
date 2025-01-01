@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.urls import reverse
 from . forms import *
@@ -15,6 +15,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test as userPassesTest
+from django.core.exceptions import ValidationError
+from decimal import InvalidOperation
 
 def isSuperuser(user):
     return user.is_superuser
@@ -370,37 +372,91 @@ def deleteScreening(request, slug, id):
 
 @login_required
 def addPhysicalExam(request, slug):
-    patient = Patient.objects.get(slug=slug)
-    form = AddPhysicalExam
-    if request.method == "POST":
-        form = AddPhysicalExam(request.POST)
-        if form.is_valid():
-            build = form.save(False)
-            build.patient = patient
-            build.save()
-            return redirect(reverse('patientDetails',kwargs={'slug':slug}))
+    try:
+        patient = get_object_or_404(Patient, slug=slug)
+        
+        if request.method == "POST":
+            form = AddPhysicalExam(request.POST)
+            if form.is_valid():
+                try:
+                    physical_exam = form.save(commit=False)
+                    physical_exam.patient = patient
+                    physical_exam.save()
+                    messages.success(request, 'Physical exam record added successfully.')
+                    return redirect(reverse('patientDetails', kwargs={'slug': slug}))
+                except Exception as e:
+                    messages.error(request, f'Error saving physical exam: {str(e)}')
+            else:
+                messages.error(request, 'Please correct the errors below.')
+        else:
+            form = AddPhysicalExam()
 
-    context={'form':form, 'patient': patient}
-    return render(request,"part_1/add-physical-exam.html",context)
+        context = {
+            'form': form,
+            'patient': patient,
+            'title': 'Add Physical Exam'
+        }
+        return render(request, "part_1/add-physical-exam.html", context)
+
+    except Exception as e:
+        messages.error(request, f'An unexpected error occurred: {str(e)}')
+        return redirect('patientList')  # or wherever you want to redirect on error
 
 @login_required
 def editPhysicalExam(request, slug, id):
-    physical_exam = PhysicalExam.objects.get(id=id)
-    if request.method == "POST":
-        form = EditPhysicalExam(request.POST, instance=physical_exam)
-        if form.is_valid():
-            form.save()
-        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
-    else:
-        form = EditPhysicalExam(instance=physical_exam)
-        context = {'form' : form}
+    try:
+        physical_exam = get_object_or_404(PhysicalExam, id=id)
+        patient = get_object_or_404(Patient, slug=slug)
+
+        if request.method == "POST":
+            form = EditPhysicalExam(request.POST, instance=physical_exam)
+            if form.is_valid():
+                try:
+                    form.save()
+                    messages.success(request, 'Physical exam record updated successfully.')
+                    return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
+                except Exception as e:
+                    messages.error(request, f'Error updating physical exam: {str(e)}')
+            else:
+                messages.error(request, 'Please correct the errors below.')
+        else:
+            form = EditPhysicalExam(instance=physical_exam)
+
+        context = {
+            'form': form,
+            'patient': patient,
+            'physical_exam': physical_exam,
+            'title': 'Edit Physical Exam'
+        }
         return render(request, "part_1/edit-physical-exam.html", context)
+
+    except PhysicalExam.DoesNotExist:
+        messages.error(request, 'Physical exam record not found.')
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
+    except Exception as e:
+        messages.error(request, f'An unexpected error occurred: {str(e)}')
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
 
 @login_required 
 def deletePhysicalExam(request, slug, id):
-    physical_exam = PhysicalExam.objects.get(id=id)
-    physical_exam.delete()
-    return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
+    try:
+        physical_exam = get_object_or_404(PhysicalExam, id=id)
+        patient_name = physical_exam.patient.name  # Save name before deletion for message
+        
+        if request.method == "POST":  # Confirm deletion with POST request
+            physical_exam.delete()
+            messages.success(request, f'Physical exam record for {patient_name} has been deleted.')
+        else:
+            messages.error(request, 'Delete operation requires POST method.')
+            
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
+
+    except PhysicalExam.DoesNotExist:
+        messages.error(request, 'Physical exam record not found.')
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
+    except Exception as e:
+        messages.error(request, f'Error deleting physical exam: {str(e)}')
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
 
 @login_required
 def therapyList(request, slug):
@@ -529,13 +585,28 @@ def deleteFollowUp(request, slug, id):
     follow_up.delete()
     return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
 
+@login_required
 def viewPhysicalExam(request, slug):
-    patient = Patient.objects.get(slug=slug)
-    list = PhysicalExam.objects.filter(patient=patient).first()
+    try:
+        # Use get_object_or_404 for better error handling
+        patient = get_object_or_404(Patient, slug=slug)
+        
+        # Get the latest physical exam
+        physical_exam = PhysicalExam.objects.filter(patient=patient).order_by('-date_recorded').first()
+        
+        if not physical_exam:
+            messages.warning(request, f"No physical exam records found for {patient.name}")
+        
+        context = {
+            'physical_exam': physical_exam,
+            'patient': patient,
+            'title': f'Physical Exam Record - {patient.name}'
+        }
+        return render(request, 'part_1/view-physical-exam.html', context)
 
-    context = {'list': list, 'patient': patient}
-    return render(request, 'part_1/view-physical-exam.html', context)
-
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return redirect('patientList')  # or wherever you want to redirect on error
 
 def viewScreening(request, slug):
     patient = Patient.objects.get(slug=slug)

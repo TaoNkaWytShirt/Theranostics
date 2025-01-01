@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.template.defaultfilters import slugify
@@ -34,19 +35,68 @@ class Patient(models.Model):
         return super().save(*args, **kwargs)
 
 class PhysicalExam(models.Model):
+    ECOG_CHOICES = [
+        (0, '0 - Fully active'),
+        (1, '1 - Restricted but ambulatory'),
+        (2, '2 - Ambulatory but unable to work'),
+        (3, '3 - Limited self-care'),
+        (4, '4 - Completely disabled'),
+        (5, '5 - Dead')
+    ]
+
     id = models.AutoField(primary_key=True)
-    #slug = AutoSlugField(populate_from='id', unique=True, blank=True, null=True)
     date_recorded = models.DateField(default=datetime.now)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, blank=True, null=True)
-    ecog_score = models.IntegerField(blank=True)
-    height = models.IntegerField(blank=True)
-    weight = models.IntegerField(blank=True)
-    bmi = models.IntegerField(blank=True) # Body Mass Index
-    bp = models.CharField(max_length=120, blank=True) # Blood Pressure
-    hr = models.IntegerField(blank=True) # Heart Rate
-    pain_score = models.IntegerField(blank=True)
+    
+    # ECOG with validation
+    ecog_score = models.IntegerField(
+        choices=ECOG_CHOICES,
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        blank=True
+    )
+    
+    # Physical measurements with decimal precision
+    height = models.FloatField(
+        validators=[MinValueValidator(0)],
+        blank=True
+    )
+    weight = models.FloatField(
+        validators=[MinValueValidator(0)],
+        blank=True
+    )
+    bmi = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True
+    )
+    
+    # Vital signs
+    bp = models.CharField(
+        max_length=120,
+        blank=True
+    )
+    hr = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        blank=True
+    )
+    
+    # Clinical assessment
+    pain_score = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
+        blank=True
+    )
     local_symptoms = models.CharField(max_length=300, blank=True)
     systemic_symptoms = models.CharField(max_length=300, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Auto-calculate BMI if height and weight are provided
+        if self.height and self.weight:
+            height_in_meters = self.height / 100
+            self.bmi = round(self.weight / (height_in_meters ** 2), 2)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Physical Exam for {self.patient} on {self.date_recorded}"
 
 
 class Screening(models.Model):

@@ -1,44 +1,143 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
-<!-- partial:index.partial.html -->
+
 {% block content %}
 <div class='dashboard'>
-
     <div class='dashboard-app'>
         <div class='dashboard-content'>
             <div class='container'>
+                <!-- Messages section -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
                 <div class='card'>
                     <div class='card-header'>
                         <h1>Edit Physical Exam</h1>
+                        {% if physical_exam.patient %}
+                        <h4 class="text-muted">Patient: {{ physical_exam.patient.name | title }}</h4>
+                        {% endif %}
                         <br>
                         <div>
-                        <form method="POST" action ="">
-                            <table>
-                                <tr>
-                                    {% csrf_token %}
-                                    <td>{{ form.height | as_crispy_field }}</td>
-                                    <td>{{ form.weight | as_crispy_field }}</td>
-                                    <td>{{ form.bmi | as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.bp | as_crispy_field }}</td>
-                                    <td>{{ form.hr | as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.ecog_score | as_crispy_field }}</td>
-                                    <td>{{ form.pain_score| as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.local_symptoms | as_crispy_field }}</td>
-                                    <td>{{ form.systemic_symptoms | as_crispy_field }}</td>
-                                </tr>
-                            </table> 
-                            <button style="margin-top: 20px;"class="btn btn-success" type="submit">Save Changes</button>
-                        </form>
+                            <!-- Form errors -->
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <form method="POST" action="" novalidate>
+                                {% csrf_token %}
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {{ form.height|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form.weight|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form.bmi|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.bp|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.hr|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.ecog_score|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.pain_score|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.local_symptoms|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.systemic_symptoms|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <button class="btn btn-success" type="submit">Save Changes</button>
+                                    <a href="{% url 'patientDetails' slug=physical_exam.patient.slug %}" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>        
         </div>
     </div>
 </div>
+
+{% block javascript %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const heightInput = document.querySelector('[name="height"]');
+        const weightInput = document.querySelector('[name="weight"]');
+        const bmiInput = document.querySelector('[name="bmi"]');
+
+        function calculateBMI() {
+            const height = parseFloat(heightInput.value);
+            const weight = parseFloat(weightInput.value);
+            
+            if (height && weight) {
+                if (height <= 0) {
+                    alert('Height must be greater than 0');
+                    return;
+                }
+                const heightInMeters = height / 100;
+                const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
+                bmiInput.value = bmi;
+            }
+        }
+
+        // Calculate BMI on page load if values exist
+        calculateBMI();
+
+        heightInput.addEventListener('input', calculateBMI);
+        weightInput.addEventListener('input', calculateBMI);
+
+        // Add confirmation before leaving page with unsaved changes
+        const form = document.querySelector('form');
+        let formChanged = false;
+
+        form.addEventListener('change', function() {
+            formChanged = true;
+        });
+
+        window.addEventListener('beforeunload', function(e) {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Remove the beforeunload handler when submitting the form
+        form.addEventListener('submit', function() {
+            formChanged = false;
+        });
+    });
+</script>
+{% endblock %}
 {% endblock content %}

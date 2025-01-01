@@ -1,6 +1,9 @@
 from .models import *
 from django import forms
 from django.forms import ModelChoiceField, ModelForm
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column, Field
+
 
 # ADDING DATA
 class AddPatient(ModelForm):
@@ -24,29 +27,68 @@ class EditPatient(ModelForm):
             'date_of_treatment': forms.DateInput(attrs={'type': 'date'}),
         }
 
-class EditPhysicalExam(ModelForm):
+class PhysicalExamFormBase(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False 
+        
+        # Add Bootstrap classes to all fields
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
     class Meta:
         model = PhysicalExam
         fields = ['ecog_score', 'height', 'weight', 'bmi', 'bp', 'hr', 'pain_score', 'local_symptoms', 'systemic_symptoms']
         labels = {
-            'height': 'Height(cm)',
-            'weight': 'Weight(kg)',
-            'bmi': 'BMI',
-            'bp' : 'Blood Pressure(mmHg)',
-            'hr' : 'Heart Rate(bpm)'
+            'ecog_score': 'ECOG Performance Status Score',
+            'height': 'Height (cm)',
+            'weight': 'Weight (kg)',
+            'bmi': 'Body Mass Index (BMI)',
+            'bp': 'Blood Pressure (mmHg)',
+            'hr': 'Heart Rate (bpm)',
+            'pain_score': 'Pain Score (0-10)',
+            'local_symptoms': 'Local Symptoms',
+            'systemic_symptoms': 'Systemic Symptoms'
+        }
+        widgets = {
+            'ecog_score': forms.Select(attrs={'class': 'form-control'}),
+            'height': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'weight': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'bmi': forms.NumberInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'step': '0.01'}),
+            'bp': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '120/80'}),
+            'hr': forms.NumberInput(attrs={'class': 'form-control'}),
+            'pain_score': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '10'}),
+            'local_symptoms': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'systemic_symptoms': forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+        }
+        help_texts = {
+            'bp': 'Systolic/diastolic (e.g., 120/80)',
+            'pain_score': '0 (no pain) to 10 (worst pain)',
         }
 
-class AddPhysicalExam(ModelForm):
-    class Meta:
-        model = PhysicalExam
-        fields = ['ecog_score', 'height', 'weight', 'bmi', 'bp', 'hr', 'pain_score', 'local_symptoms', 'systemic_symptoms']
-        labels = {
-            'height': 'Height(cm)',
-            'weight': 'Weight(kg)',
-            'bmi': 'BMI',
-            'bp' : 'Blood Pressure(mmHg)',
-            'hr' : 'Heart Rate(bpm)'
-        }
+    def clean_bp(self):
+        bp = self.cleaned_data.get('bp')
+        if bp:
+            # Validate blood pressure format (e.g., "120/80")
+            try:
+                systolic, diastolic = bp.split('/')
+                systolic = int(systolic)
+                diastolic = int(diastolic)
+            except ValueError:
+                raise forms.ValidationError("Blood pressure must be in format 'systolic/diastolic' (e.g. 120/80)")
+        return bp
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data
+
+class EditPhysicalExam(PhysicalExamFormBase):
+    pass
+
+class AddPhysicalExam(PhysicalExamFormBase):
+    pass
 
 class AddScreening(ModelForm):
     class Meta:
