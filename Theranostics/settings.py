@@ -100,7 +100,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'theranostics',
         'USER': 'root',
-        'PASSWORD': '1234',
+        'PASSWORD': '030404',
         'HOST': 'localhost',  # or another host if using a remote DB
         'PORT': '3306',  # Default MySQL port
     }
