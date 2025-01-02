@@ -1,6 +1,9 @@
 from django.db import models
 from part_1.models import Patient
 from multiselectfield import MultiSelectField
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+
 
 # Create your models here.
 class PostTherapy(models.Model):
@@ -18,12 +21,23 @@ class PostTherapy(models.Model):
     with_spect_ct = models.BooleanField()
     lesions = MultiSelectField(max_length=120, choices = LESIONS) #MAKE SURE MULTIPLE CHOICE FIELD FOR FORMS
     bone_lesion_details = models.TextField(blank=True, null=True)
-    lesion_image = models.ImageField(upload_to="images/")#image
+    lesion_image = models.ImageField(upload_to="images/")
     
-
     #Dosimetry
-    salivary_gland = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    kidney_left = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    kidney_right = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    salivary_gland = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
+    kidney_left = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
+    kidney_right = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
     dosimetry_image = models.ImageField(upload_to="images/")
     
+    def clean(self):
+        if self.salivary_gland is not None and self.salivary_gland < 0:
+            raise ValidationError({'salivary_gland': 'Salivary Gland Cannot Be Negative.'})
+        if self.kidney_left is not None and self.kidney_left < 0:
+            raise ValidationError({'kidney_left': 'Left Kidney Cannot Be Negative.'})
+        if self.kidney_right is not None and self.kidney_right < 0:
+            raise ValidationError({'kidney_right': 'Right Kidney Cannot Be Negative.'})
+        super().clean()
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
