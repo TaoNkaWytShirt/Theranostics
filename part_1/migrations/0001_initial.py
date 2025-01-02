@@ -23,7 +23,6 @@ class Migration(migrations.Migration):
                 ('diagnosis_date', models.DateField()),
                 ('surgery_date', models.DateField()),
                 ('histopath_result', models.ImageField(blank=True, null=True, upload_to='')),
-                ('histopath_details', models.TextField(blank=True, null=True)),
                 ('gleason_score', models.IntegerField(blank=True, null=True)),
                 ('date_of_treatment', models.DateField()),
                 ('type_of_treatment', models.CharField(choices=[('Hormonal Treatment', 'Hormonal Treatment'), ('Radiation Therapy', 'Radiation Therapy'), ('Chemotherapy', 'Chemotherapy'), ('Others', 'Others')], max_length=120)),
