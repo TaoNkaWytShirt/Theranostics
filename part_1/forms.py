@@ -7,6 +7,35 @@ from crispy_forms.layout import Layout, Row, Column, Field
 
 # ADDING DATA
 class AddPatient(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].label = "Name"
+        self.fields['age'].label = "Age"
+        self.fields['address'].label = "Address"
+        self.fields['diagnosis_date'].label = "Diagnosis Date"
+        self.fields['surgery_date'].label = "Surgery Date"
+        self.fields['histopath_result'].label = "Histopathology Result"
+        self.fields['histopath_details'].label = "Histopathology Details"
+        self.fields['gleason_score'].label = "Gleason Score"
+        self.fields['date_of_treatment'].label = "Date of Treatment"
+        self.fields['type_of_treatment'].label = "Type of Treatment"
+        
+        # Add help text for Gleason score
+        self.fields['gleason_score'].help_text = "Enter a value between 6 and 10"
+
+    def clean_age(self):
+        age = self.cleaned_data.get('age')
+        if age is not None and age < 0:
+            raise forms.ValidationError("Age cannot be negative.")
+        return age
+
+    def clean_gleason_score(self):
+        score = self.cleaned_data.get('gleason_score')
+        if score is not None:
+            if score < 6 or score > 10:
+                raise forms.ValidationError("Gleason score must be between 6 and 10")
+        return score
+
     class Meta:
         model = Patient
         fields = ['name', 'age', 'address', 'diagnosis_date', 'surgery_date', 'histopath_result', 'histopath_details', 'gleason_score', 'date_of_treatment', 'type_of_treatment']
@@ -14,8 +43,25 @@ class AddPatient(ModelForm):
             'diagnosis_date': forms.DateInput(attrs={'type': 'date'}),
             'surgery_date': forms.DateInput(attrs={'type': 'date'}),
             'date_of_treatment': forms.DateInput(attrs={'type': 'date'}),
+            'age': forms.NumberInput(attrs={'min': '0', 'type': 'number'}),
+            'gleason_score': forms.NumberInput(attrs={'min': '6', 'max': '10', 'type': 'number'}),
         }
-        
+        error_messages = {
+            'name': {'required': "Patient name is required."},
+            'age': {'required': "Patient age is required.", 'invalid': "Please enter a valid age."},
+            'address': {'required': "Address is required."},
+            'diagnosis_date': {'required': "Diagnosis date is required."},
+            'surgery_date': {'required': "Surgery date is required."},
+            'histopath_result': {'required': "Histopathology result image is required."},
+            'histopath_details': {'required': "Histopathology details are required."},
+            'gleason_score': {
+                'invalid': "Please enter a valid Gleason score (6-10).",
+                'min_value': "Gleason score cannot be less than 6.",
+                'max_value': "Gleason score cannot be greater than 10."
+            },
+            'date_of_treatment': {'required': "Treatment date is required."},
+            'type_of_treatment': {'required': "Type of treatment is required."}
+        }
 
 class EditPatient(ModelForm):
     class Meta:
@@ -25,6 +71,7 @@ class EditPatient(ModelForm):
             'diagnosis_date': forms.DateInput(attrs={'type': 'date'}),
             'surgery_date': forms.DateInput(attrs={'type': 'date'}),
             'date_of_treatment': forms.DateInput(attrs={'type': 'date'}),
+            'age': forms.NumberInput(attrs={'min': '0', 'type': 'number'}),
         }
 
 class PhysicalExamFormBase(ModelForm):

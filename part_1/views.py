@@ -304,14 +304,19 @@ def patientSearch(request):
 
 @login_required
 def addPatient(request):
-    form = AddPatient()
     if request.method == "POST":
         form = AddPatient(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('patientList')
-    context={'form':form}
-    return render(request,"part_1/add-patient.html", context)
+            try:
+                patient = form.save()
+                return redirect('patientList')
+            except Exception as e:
+                messages.error(request, f"Error saving patient: {str(e)}")
+    else:
+        form = AddPatient()
+    
+    context = {'form': form}
+    return render(request, "part_1/add-patient.html", context)
 
 @login_required
 def editPatient(request, slug):
