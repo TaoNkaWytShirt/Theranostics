@@ -30,14 +30,14 @@ class FollowUp(models.Model):
         ('Right Obstruction', 'Right Obstruction')
     )
     salivary_gland_status = models.CharField(max_length=120, choices = SALIVARY_GLAND_STATUS)
-    salivary_gland_image = models.ImageField(blank=True)
+    salivary_gland_image = models.ImageField(upload_to="images/", null=True)
 
     BONE_METASTASIS_STATUS = (
         ('Metastasis', 'Metastasis'),
         ('No Metastasis', 'No Metastasis')
     )
     bone_metastasis_status = models.CharField(max_length=120, choices = BONE_METASTASIS_STATUS, blank=True, null=True)
-    bone_scan_image = models.ImageField(upload_to="images/")
+    bone_scan_image = models.ImageField(upload_to="images/", null=True)
     renal_scintigraphy = models.ImageField(upload_to="images/")
 
     GAPSMA = (

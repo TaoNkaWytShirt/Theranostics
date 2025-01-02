@@ -134,7 +134,7 @@ class Screening(models.Model):
         ('Right Obstruction', 'Right Obstruction')
     )
     salivary_gland_status = models.CharField(max_length=120, choices = SALIVARY_GLAND_STATUS)
-    salivary_gland_image = models.ImageField(upload_to="images/")
+    salivary_gland_image = models.ImageField(upload_to="images/", null=True)
 
     BONE_METASTASIS_STATUS = (
         ('Metastasis', 'Metastasis'),
