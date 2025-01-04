@@ -21,15 +21,25 @@ class Patient(models.Model):
     surgery_date = models.DateField()
     histopath_result = models.ImageField(upload_to="images/")
     histopath_details = models.TextField(max_length=200, blank=False, null=True)
-    gleason_score = models.IntegerField(
-        validators=[
-            MinValueValidator(6, message="Gleason score must be between 6 and 10"),
-            MaxValueValidator(10, message="Gleason score must be between 6 and 10")
-        ],
-        blank=True, 
-        null=True,
-        help_text="Enter a value between 6 and 10"
+    
+    GLEASON_CHOICES = [
+        ('', '----------'),
+        ('<6', 'Less than 6'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10')
+    ]
+    
+    gleason_score = models.CharField(
+        max_length=2,
+        choices=GLEASON_CHOICES,
+        default='',
+        blank=True,
+        null=True
     )
+    
     date_of_treatment = models.DateField()
     type_of_treatment = models.CharField(max_length=120, choices=TYPE_TREATMENT)
 
