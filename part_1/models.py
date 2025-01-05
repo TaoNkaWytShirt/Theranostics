@@ -66,13 +66,11 @@ class PhysicalExam(models.Model):
     date_recorded = models.DateField(default=datetime.now)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, blank=True, null=True)
     
-    # ECOG with validation
     ecog_score = models.IntegerField(
         choices=ECOG_CHOICES,
         validators=[MinValueValidator(0), MaxValueValidator(5)],
     )
     
-    # Physical measurements with decimal precision
     height = models.FloatField(
         validators=[MinValueValidator(0)],
     )
@@ -85,7 +83,6 @@ class PhysicalExam(models.Model):
         blank=True
     )
     
-    # Vital signs
     bp = models.CharField(
         max_length=120,
     )
@@ -93,7 +90,6 @@ class PhysicalExam(models.Model):
         validators=[MinValueValidator(0)],
     )
     
-    # Clinical assessment
     pain_score = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(10)],
     )
@@ -101,7 +97,6 @@ class PhysicalExam(models.Model):
     systemic_symptoms = models.CharField(max_length=300, blank=True)
 
     def save(self, *args, **kwargs):
-        # Auto-calculate BMI if height and weight are provided
         if self.height and self.weight:
             height_in_meters = self.height / 100
             self.bmi = round(self.weight / (height_in_meters ** 2), 2)

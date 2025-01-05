@@ -10,7 +10,7 @@
             <div class='container'>
                 <div class='card'>
                     <div class='card-header'>
-                        <h1>SCREENING/BASELINE</h1>
+                        <h1>EDIT FOLLOW-UP</h1>
                         <br>
                         <div>
                         <form method="POST" action ="" enctype="multipart/form-data">
@@ -57,8 +57,7 @@
                             </div>
 
                             <div><br>
-                                <span>GAPSMA<span>
-                                <div>{{ form.gapsma_choices | as_crispy_field }}</div>
+                                <span><h2> GAPSMA</h2></span>                                <div>{{ form.gapsma_choices | as_crispy_field }}</div>
                                 <div>{{ form.gapsma_img| as_crispy_field }}</div>
                                 <div><br>
                                     <div>{{ form.gapsma_prostate_lesion_status | as_crispy_field }}</div>
@@ -104,7 +103,7 @@
                             </div>
 
                             <div><br>
-                                <span>FDGPETCT</span>
+                                <span><h2>FDGPETCT</h2></span>
                                 {{ form.fdgpetct_img | as_crispy_field }}
                                 <div><br>
                                     <div>{{ form.fdgpetct_prostate_lesion_status | as_crispy_field }}</div>
