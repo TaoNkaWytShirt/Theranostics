@@ -98,10 +98,6 @@
             const weight = parseFloat(weightInput.value);
             
             if (height && weight) {
-                if (height <= 0) {
-                    alert('Height must be greater than 0');
-                    return;
-                }
                 const heightInMeters = height / 100;
                 const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
                 bmiInput.value = bmi;

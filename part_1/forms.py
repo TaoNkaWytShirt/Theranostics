@@ -113,10 +113,14 @@ class PhysicalExamFormBase(ModelForm):
         
     def clean_ecog_score(self):
         ecog_score = self.cleaned_data.get('ecog_score')
-        if ecog_score is not None and not (0 <= ecog_score <= 5):
-            raise forms.ValidationError("Please select a score from 0 to 5.")
+        try:
+            ecog_score = int(ecog_score) if ecog_score is not None else None
+            if ecog_score is not None and not (0 <= ecog_score <= 5):
+                raise forms.ValidationError("Please select a score from 0 to 5.")
+        except (ValueError, TypeError):
+            raise forms.ValidationError("ECOG score must be a number between 0 and 5.")
         return ecog_score
-
+    
     def clean_height(self):
         height = self.cleaned_data.get('height')
         if height is not None and height <= 0:

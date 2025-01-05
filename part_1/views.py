@@ -391,8 +391,8 @@ def addPhysicalExam(request, slug):
                     return redirect(reverse('patientDetails', kwargs={'slug': slug}))
                 except Exception as e:
                     messages.error(request, f'Error saving physical exam: {str(e)}')
-            else:
-                messages.error(request, 'Please correct the errors below.')
+            # else:
+            #     messages.error(request, 'Please correct the errors below.')
         else:
             form = AddPhysicalExam()
 
@@ -405,7 +405,7 @@ def addPhysicalExam(request, slug):
 
     except Exception as e:
         messages.error(request, f'An unexpected error occurred: {str(e)}')
-        return redirect('patientList')  # or wherever you want to redirect on error
+        return redirect('patientList')
 
 @login_required
 def editPhysicalExam(request, slug, id):
@@ -422,8 +422,8 @@ def editPhysicalExam(request, slug, id):
                     return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
                 except Exception as e:
                     messages.error(request, f'Error updating physical exam: {str(e)}')
-            else:
-                messages.error(request, 'Please correct the errors below.')
+            # else:
+            #     messages.error(request, 'Please correct the errors below.')
         else:
             form = EditPhysicalExam(instance=physical_exam)
 
