@@ -19,15 +19,15 @@ class PostTherapy(models.Model):
     date_of_post_therapy = models.DateField()
     post_therapy_scan_hours = models.IntegerField(blank=True, null=True)
     with_spect_ct = models.BooleanField()
-    lesions = MultiSelectField(max_length=120, choices = LESIONS) #MAKE SURE MULTIPLE CHOICE FIELD FOR FORMS
+    lesions = MultiSelectField(max_length=120, choices=LESIONS) 
     bone_lesion_details = models.TextField(blank=True, null=True)
-    lesion_image = models.ImageField(upload_to="images/")
+    lesion_image = models.ImageField(upload_to="images/", blank=True, null=True)
     
     #Dosimetry
     salivary_gland = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
     kidney_left = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
     kidney_right = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
-    dosimetry_image = models.ImageField(upload_to="images/")
+    dosimetry_image = models.ImageField(upload_to="images/", blank=True, null=True)
     
     def clean(self):
         if self.salivary_gland is not None and self.salivary_gland < 0:
