@@ -52,9 +52,9 @@
                         <br>
                         Pain Score: {{physical_exam.pain_score}}
                         <br>
-                        Local Symptoms: {{physical_exam.local_symptoms}}
+                        Local Symptoms: {{physical_exam.local_symptoms|default:"N/A"}}
                         <br>
-                        Systemic Symptoms: {{physical_exam.systemic_symptoms}}
+                        Systemic Symptoms: {{physical_exam.systemic_symptoms|default:"N/A"}}
                         <br>
                         <a href="{% url 'editPhysicalExam' slug=patient.slug id=physical_exam.id %}" class="btn btn-success mt-3">Edit</a>
                         <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deletePEPopup{{physical_exam.id}}">

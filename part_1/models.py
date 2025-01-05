@@ -70,17 +70,14 @@ class PhysicalExam(models.Model):
     ecog_score = models.IntegerField(
         choices=ECOG_CHOICES,
         validators=[MinValueValidator(0), MaxValueValidator(5)],
-        blank=True
     )
     
     # Physical measurements with decimal precision
     height = models.FloatField(
         validators=[MinValueValidator(0)],
-        blank=True
     )
     weight = models.FloatField(
         validators=[MinValueValidator(0)],
-        blank=True
     )
     bmi = models.DecimalField(
         max_digits=5,
@@ -91,17 +88,14 @@ class PhysicalExam(models.Model):
     # Vital signs
     bp = models.CharField(
         max_length=120,
-        blank=True
     )
     hr = models.IntegerField(
         validators=[MinValueValidator(0)],
-        blank=True
     )
     
     # Clinical assessment
     pain_score = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(10)],
-        blank=True
     )
     local_symptoms = models.CharField(max_length=300, blank=True)
     systemic_symptoms = models.CharField(max_length=300, blank=True)

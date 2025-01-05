@@ -77,7 +77,6 @@ class PhysicalExamFormBase(ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False 
         
-        # Add Bootstrap classes to all fields
         for field in self.fields:
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -98,11 +97,11 @@ class PhysicalExamFormBase(ModelForm):
         }
         widgets = {
             'ecog_score': forms.Select(attrs={'class': 'form-control'}),
-            'height': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
-            'weight': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'height': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1', 'min': '0'}),
+            'weight': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1', 'min': '0'}),
             'bmi': forms.NumberInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'step': '0.01'}),
             'bp': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '120/80'}),
-            'hr': forms.NumberInput(attrs={'class': 'form-control'}),
+            'hr': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
             'pain_score': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '10'}),
             'local_symptoms': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'systemic_symptoms': forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
@@ -111,7 +110,35 @@ class PhysicalExamFormBase(ModelForm):
             'bp': 'Systolic/diastolic (e.g., 120/80)',
             'pain_score': '0 (no pain) to 10 (worst pain)',
         }
+        
+    def clean_ecog_score(self):
+        ecog_score = self.cleaned_data.get('ecog_score')
+        try:
+            ecog_score = int(ecog_score) if ecog_score is not None else None
+            if ecog_score is not None and not (0 <= ecog_score <= 5):
+                raise forms.ValidationError("Please select a score from 0 to 5.")
+        except (ValueError, TypeError):
+            raise forms.ValidationError("ECOG score must be a number between 0 and 5.")
+        return ecog_score
+    
+    def clean_height(self):
+        height = self.cleaned_data.get('height')
+        if height is not None and height <= 0:
+            raise forms.ValidationError("Height must be a non-negative value.")
+        return height
 
+    def clean_weight(self):
+        weight = self.cleaned_data.get('weight')
+        if weight is not None and weight <= 0:
+            raise forms.ValidationError("Weight must be a non-negative value.")
+        return weight
+
+    def clean_hr(self):
+        hr = self.cleaned_data.get('hr')
+        if hr is not None and hr <= 0:
+            raise forms.ValidationError("Heart rate must be a non-negative value.")
+        return hr
+    
     def clean_bp(self):
         bp = self.cleaned_data.get('bp')
         if bp:
@@ -123,6 +150,12 @@ class PhysicalExamFormBase(ModelForm):
             except ValueError:
                 raise forms.ValidationError("Blood pressure must be in format 'systolic/diastolic' (e.g. 120/80)")
         return bp
+    
+    def clean_pain_score(self):
+        pain_score = self.cleaned_data.get('pain_score')
+        if pain_score is not None and not (0 <= pain_score <= 10):
+            raise forms.ValidationError("Pain score must be between 0 and 10.")
+        return pain_score
 
     def clean(self):
         cleaned_data = super().clean()

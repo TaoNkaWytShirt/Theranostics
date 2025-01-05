@@ -35,44 +35,44 @@
 
                             <form method="POST" action="">
                                 {% csrf_token %}
-    <div class="row">
-        <div class="col-md-4">
-            {{ form.height|as_crispy_field }}
-        </div>
-        <div class="col-md-4">
-            {{ form.weight|as_crispy_field }}
-        </div>
-        <div class="col-md-4">
-            {{ form.bmi|as_crispy_field }}
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-6">
-            {{ form.bp|as_crispy_field }}
-        </div>
-        <div class="col-md-6">
-            {{ form.hr|as_crispy_field }}
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-6">
-            {{ form.ecog_score|as_crispy_field }}
-        </div>
-        <div class="col-md-6">
-            {{ form.pain_score|as_crispy_field }}
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-6">
-            {{ form.local_symptoms|as_crispy_field }}
-        </div>
-        <div class="col-md-6">
-            {{ form.systemic_symptoms|as_crispy_field }}
-        </div>
-    </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {{ form.height|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form.weight|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form.bmi|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.bp|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.hr|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.ecog_score|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.pain_score|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.local_symptoms|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.systemic_symptoms|as_crispy_field }}
+                                    </div>
+                                </div>
                                 <div class="mt-4">
                                     <button class="btn btn-success" type="submit">Save Changes</button>
                                     <a href="{% url 'patientDetails' slug=patient.slug %}" class="btn btn-secondary">Cancel</a>
@@ -98,10 +98,6 @@
             const weight = parseFloat(weightInput.value);
             
             if (height && weight) {
-                if (height <= 0) {
-                    alert('Height must be greater than 0');
-                    return;
-                }
                 const heightInMeters = height / 100;
                 const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
                 bmiInput.value = bmi;
