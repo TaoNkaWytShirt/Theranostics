@@ -1,6 +1,5 @@
 from django.db import models
 from part_1.models import *
-from multiselectfield import MultiSelectField
 from django.core.validators import MinValueValidator
 
 # class Equipment(models.Model):
@@ -33,7 +32,7 @@ class Therapy(models.Model):
     saturation = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
     date_therapy = models.DateField()
     radiopharm = models.CharField(max_length=120, null=True, blank=True)
-    side_effects = MultiSelectField(max_length=120, choices=SIDE_EFFECTS)
+    side_effects = models.CharField(max_length=120, blank=True)
 
     def clean(self):
         if self.systolic is not None and self.systolic < 0:

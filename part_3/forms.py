@@ -64,6 +64,19 @@ class AddPostTherapy(ModelForm):
         }
 
 class EditPostTherapy(ModelForm):
+    LESIONS = (
+        ('Prostate', 'Prostate'),
+        ('Lymph Nodes', 'Lymph Nodes'),
+        ('Bones', 'Bones'),
+        ('Lungs', 'Lungs'),
+        ('Liver', 'Liver')
+    )
+    
+    lesions = forms.MultipleChoiceField(
+        choices=LESIONS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
     def clean_post_therapy_scan_hours(self):
         hours = self.cleaned_data.get('post_therapy_scan_hours')
         if hours is not None and hours < 0:

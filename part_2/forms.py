@@ -3,6 +3,19 @@ from django import forms
 from django.forms import ModelForm
 
 class AddTherapy(ModelForm):
+    SIDE_EFFECTS = (
+        ('Fatigue', 'Fatigue'),
+        ('Nausea or Vomiting', 'Nausea or Vomiting'),
+        ('Dry Lips or Mouth', 'Dry Lips or Mouth'),
+        ('Headache', 'Headache'),
+        ('Bone Pain', 'Bone Pain')
+    )
+
+    side_effects = forms.MultipleChoiceField(
+        choices=SIDE_EFFECTS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
     class Meta:
         model = Therapy
         fields = ['date_of_psma', 'premedications', 'medications', 'furosemide', 'systolic', 'diastolic', 'hr', 'rr', 'saturation', 'date_therapy', 'radiopharm', 'side_effects']
@@ -45,9 +58,35 @@ class AddTherapy(ModelForm):
 
 
 class EditTherapy(ModelForm):
+    SIDE_EFFECTS = (
+        ('Fatigue', 'Fatigue'),
+        ('Nausea or Vomiting', 'Nausea or Vomiting'),
+        ('Dry Lips or Mouth', 'Dry Lips or Mouth'),
+        ('Headache', 'Headache'),
+        ('Bone Pain', 'Bone Pain')
+    )
+
+    side_effects = forms.MultipleChoiceField(
+        choices=SIDE_EFFECTS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            # If side_effects is stored as a string
+            if isinstance(self.instance.side_effects, str):
+                self.initial['side_effects'] = self.instance.side_effects.split(',')
+            # If side_effects is already a list
+            else:
+                self.initial['side_effects'] = self.instance.side_effects
+
     class Meta:
         model = Therapy
-        fields = ['date_of_psma', 'premedications', 'medications', 'furosemide', 'systolic', 'diastolic', 'hr', 'rr', 'saturation', 'date_therapy', 'radiopharm', 'side_effects']
+        fields = ['date_of_psma', 'premedications', 'medications', 'furosemide', 
+                 'systolic', 'diastolic', 'hr', 'rr', 'saturation', 
+                 'date_therapy', 'radiopharm', 'side_effects']
         widgets = {
             'date_of_psma': forms.DateInput(attrs={'type': 'date'}),
             'date_therapy': forms.DateInput(attrs={'type': 'date'}),
@@ -58,7 +97,8 @@ class EditTherapy(ModelForm):
             'diastolic': 'Diastolic Blood Pressure (mmHg)',
             'hr': 'Heart Rate (bpm)',
             'rr': 'Respiratory Rate (bpm)',
-            'saturation': 'Oxygen Saturation (%)'
+            'saturation': 'Oxygen Saturation (%)',
+            'date_therapy': 'Date of Therapy',
         }
 
     def clean(self):
