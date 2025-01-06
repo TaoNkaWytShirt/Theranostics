@@ -358,16 +358,29 @@ def addScreening(request, slug):
 
 @login_required
 def editScreening(request, slug, id):
-    physical_exam = Screening.objects.get(id=id)
-    if request.method == "POST":
-        form = EditScreening(request.POST, instance=physical_exam)
-        if form.is_valid():
-            form.save()
-        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
-    else:
-        form = EditScreening(instance=physical_exam)
-        context = {'form' : form}
+    try:
+        screening = get_object_or_404(Screening, id=id)
+        patient = get_object_or_404(Patient, slug=slug)  # Add this line
+        
+        if request.method == "POST":
+            form = EditScreening(request.POST, request.FILES, instance=screening)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Screening record updated successfully.')
+                return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug": slug}))
+        else:
+            form = EditScreening(instance=screening)
+            
+        context = {
+            'form': form,
+            'patient': patient,  # Add patient to context
+            'screening': screening
+        }
         return render(request, "part_1/edit-screening.html", context)
+        
+    except Exception as e:
+        messages.error(request, f'An error occurred: {str(e)}')
+        return redirect('patientList')
 
 @login_required
 def deleteScreening(request, slug, id):
