@@ -8,7 +8,7 @@ class AddPostTherapy(ModelForm):
     def clean_post_therapy_scan_hours(self):
         hours = self.cleaned_data.get('post_therapy_scan_hours')
         if hours is not None and hours < 0:
-            raise forms.ValidationError("Scan hours cannot be negative.")
+            raise forms.ValidationError("Scan hours must be a non-negative value.")
         return hours
 
     class Meta:
@@ -46,7 +46,7 @@ class AddPostTherapy(ModelForm):
         }
         error_messages = {
             'post_therapy_scan_hours': {
-                'min_value': 'Scan hours cannot be negative.'
+                'min_value': 'Scan hours must be a non-negative value.'
             }
         }
 
@@ -54,7 +54,7 @@ class EditPostTherapy(ModelForm):
     def clean_post_therapy_scan_hours(self):
         hours = self.cleaned_data.get('post_therapy_scan_hours')
         if hours is not None and hours < 0:
-            raise forms.ValidationError("Scan hours cannot be negative.")
+            raise forms.ValidationError("Scan hours must be a non-negative value.")
         return hours
 
     def clean(self):
@@ -63,16 +63,16 @@ class EditPostTherapy(ModelForm):
         # Validate salivary gland value
         salivary_gland = cleaned_data.get('salivary_gland')
         if salivary_gland is not None and salivary_gland < 0:
-            self.add_error('salivary_gland', 'Value cannot be negative')
+            self.add_error('salivary_gland', 'Value must be a non-negative value.')
 
         # Validate kidney values
         kidney_left = cleaned_data.get('kidney_left')
         if kidney_left is not None and kidney_left < 0:
-            self.add_error('kidney_left', 'Value cannot be negative')
+            self.add_error('kidney_left', 'Value must be a non-negative value.')
 
         kidney_right = cleaned_data.get('kidney_right')
         if kidney_right is not None and kidney_right < 0:
-            self.add_error('kidney_right', 'Value cannot be negative')
+            self.add_error('kidney_right', 'Value must be a non-negative value.')
 
         return cleaned_data
     
@@ -113,6 +113,6 @@ class EditPostTherapy(ModelForm):
         }
         error_messages = {
             'post_therapy_scan_hours': {
-                'min_value': 'Scan hours cannot be negative.'
+                'min_value': 'Scan hours must be a non-negative value.'
             }
         }
