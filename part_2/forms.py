@@ -12,11 +12,12 @@ class AddTherapy(ModelForm):
         }
         labels = {
             'date_of_psma': 'Date of PSMA',
-            'systolic': 'Systolic BP(mmHg)',
-            'diastolic': 'Diastolic BP(mmHg)',
-            'hr': 'Heart Rate(bpm)',
-            'rr': 'Respiratory Rate(bpm)',
-            'saturation': 'Oxygen Saturation(%)'
+            'systolic': 'Systolic Blood Pressure (mmHg)',
+            'diastolic': 'Diastolic Blood Pressure (mmHg)',
+            'hr': 'Heart Rate (bpm)',
+            'rr': 'Respiratory Rate (bpm)',
+            'saturation': 'Oxygen Saturation (%)',
+            'date_therapy': 'Date of Therapy',
         }
 
     def clean(self):
@@ -29,15 +30,15 @@ class AddTherapy(ModelForm):
         saturation = cleaned_data.get('saturation')
 
         if systolic is not None and systolic < 0:
-            self.add_error('systolic', 'Systolic blood Pressure Cannot Be Negative.')
+            self.add_error('systolic', 'Systolic blood pressure must be a non-negative value.')
         if diastolic is not None and diastolic < 0:
-            self.add_error('diastolic', 'Diastolic Blood Pressure Cannot Be Negative.')
+            self.add_error('diastolic', 'Diastolic blood pressure must be a non-negative value.')
         if hr is not None and hr < 0:
-            self.add_error('hr', 'Heart Rate Cannot Be Negative.')
+            self.add_error('hr', 'Heart rate must be a non-negative value.')
         if rr is not None and rr < 0:
-            self.add_error('rr', 'Respiratory Rrate Cannot Be Negative.')
+            self.add_error('rr', 'Respiratory rate must be a non-negative value.')
         if saturation is not None and saturation < 0:
-            self.add_error('saturation', 'Oxygen Saturation Cannot Be Negative.')
+            self.add_error('saturation', 'Oxygen saturation must be a non-negative value.')
 
         return cleaned_data
 
@@ -53,11 +54,11 @@ class EditTherapy(ModelForm):
         }
         labels = {
             'date_of_psma': 'Date of PSMA',
-            'systolic': 'Systolic BP(mmHg)',
-            'diastolic': 'Diastolic BP(mmHg)',
-            'hr': 'Heart Rate(bpm)',
-            'rr': 'Respiratory Rate(bpm)',
-            'saturation': 'Oxygen Saturation(%)'
+            'systolic': 'Systolic Blood Pressure (mmHg)',
+            'diastolic': 'Diastolic Blood Pressure (mmHg)',
+            'hr': 'Heart Rate (bpm)',
+            'rr': 'Respiratory Rate (bpm)',
+            'saturation': 'Oxygen Saturation (%)'
         }
 
     def clean(self):
@@ -70,14 +71,14 @@ class EditTherapy(ModelForm):
         saturation = cleaned_data.get('saturation')
 
         if systolic is not None and systolic < 0:
-            self.add_error('systolic', 'Systolic blood Pressure Cannot Be Negative.')
+            self.add_error('systolic', 'Systolic blood Pressure must be a non-negative value.')
         if diastolic is not None and diastolic < 0:
-            self.add_error('diastolic', 'Diastolic Blood Pressure Cannot Be Negative.')
+            self.add_error('diastolic', 'Diastolic blood pressure must be a non-negative value.')
         if hr is not None and hr < 0:
-            self.add_error('hr', 'Heart Rate Cannot Be Negative.')
+            self.add_error('hr', 'Heart rate must be a non-negative value.')
         if rr is not None and rr < 0:
-            self.add_error('rr', 'Respiratory Rrate Cannot Be Negative.')
+            self.add_error('rr', 'Respiratory rate must be a non-negative value.')
         if saturation is not None and saturation < 0:
-            self.add_error('saturation', 'Oxygen Saturation Cannot Be Negative.')
+            self.add_error('saturation', 'Oxygen saturation must be a non-negative value.')
 
         return cleaned_data
