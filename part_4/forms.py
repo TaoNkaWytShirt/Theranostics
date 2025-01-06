@@ -81,11 +81,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     # Add similar clean methods for other SUV fields (lymph node, bone, brain, lung, liver)
@@ -94,11 +89,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_gapsma_bone_suv(self):
@@ -106,11 +96,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_gapsma_brain_suv(self):
@@ -118,11 +103,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_gapsma_lung_suv(self):
@@ -130,11 +110,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_gapsma_liver_suv(self):
@@ -142,11 +117,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     # Similar clean methods for FDGPETCT SUV fields
@@ -155,11 +125,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_fdgpetct_lymph_node_suv(self):
@@ -167,11 +132,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_fdgpetct_bone_suv(self):
@@ -179,11 +139,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_fdgpetct_brain_suv(self):
@@ -191,11 +146,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_fdgpetct_lung_suv(self):
@@ -203,11 +153,6 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
 
     def clean_fdgpetct_liver_suv(self):
@@ -215,12 +160,84 @@ class AddFollowUp(ModelForm):
         if suv is not None:
             if suv < 0:
                 raise forms.ValidationError("SUV must be a non-negative value.")
-            # Check for more than 3 digits before decimal
-            suv_str = str(suv)
-            integer_part = suv_str.split('.')[0]
-            if len(integer_part) > 3:
-                raise forms.ValidationError("Ensure that there are no more than 3 digits before the decimal point.")
         return suv
+    
+    def clean_gapsma_prostate_size(self):
+        size = self.cleaned_data.get('gapsma_prostate_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_gapsma_lymph_node_size(self):
+        size = self.cleaned_data.get('gapsma_lymph_node_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_gapsma_bone_size(self):
+        size = self.cleaned_data.get('gapsma_bone_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_gapsma_brain_size(self):
+        size = self.cleaned_data.get('gapsma_brain_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_gapsma_lung_size(self):
+        size = self.cleaned_data.get('gapsma_lung_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_gapsma_liver_size(self):
+        size = self.cleaned_data.get('gapsma_liver_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_fdgpetct_prostate_size(self):
+        size = self.cleaned_data.get('fdgpetct_prostate_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_fdgpetct_lymph_node_size(self):
+        size = self.cleaned_data.get('fdgpetct_lymph_node_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_fdgpetct_bone_size(self):
+        size = self.cleaned_data.get('fdgpetct_bone_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_fdgpetct_brain_size(self):
+        size = self.cleaned_data.get('fdgpetct_brain_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
+
+    def clean_fdgpetct_lung_size(self):
+        size = self.cleaned_data.get('fdgpetct_lung_size')
+        if size is not None:
+            if size < 0:
+                raise forms.ValidationError("Size must be a non-negative value.")
+        return size
 
     class Meta:
         model = FollowUp
