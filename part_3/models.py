@@ -21,7 +21,7 @@ class PostTherapy(models.Model):
     with_spect_ct = models.BooleanField()
     lesions = MultiSelectField(max_length=120, choices=LESIONS) 
     bone_lesion_details = models.TextField(blank=True, null=True)
-    lesion_image = models.ImageField(upload_to="images/", blank=True, null=True)
+    lesion_image = models.ImageField(upload_to="images/")
     
     #Dosimetry
     salivary_gland = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
