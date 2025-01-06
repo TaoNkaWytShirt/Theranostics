@@ -495,6 +495,8 @@ def addTherapy(request, slug):
             build = form.save(False)
             build.patient = patient
             build.save()
+            messages.success(request, 'Therapy record added successfully.')
+
             return redirect(reverse('patientDetails',kwargs={'slug':slug}))
 # def
     context={'form':form, 'patient': patient}
@@ -548,6 +550,8 @@ def addPostTherapy(request, slug):
             build = form.save(False)
             build.patient = patient
             build.save()
+            messages.success(request, 'Post-therapy record added successfully.')
+
             return redirect(reverse('patientDetails',kwargs={'slug':slug}))
         
     context={'form':form, 'patient': patient}
@@ -601,6 +605,8 @@ def addFollowUp(request, slug):
             build = form.save(False)
             build.patient = patient
             build.save()
+            messages.success(request, 'Follow-up record added successfully.')
+
             return redirect(reverse('patientDetails',kwargs={'slug':slug}))
 # def
     context={'form':form, 'patient': patient}
