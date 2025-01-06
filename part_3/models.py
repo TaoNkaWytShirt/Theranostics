@@ -19,7 +19,7 @@ class PostTherapy(models.Model):
     date_of_post_therapy = models.DateField()
     post_therapy_scan_hours = models.IntegerField(blank=True, null=True)
     with_spect_ct = models.BooleanField()
-    lesions = MultiSelectField(max_length=120, choices=LESIONS) 
+    lesions = MultiSelectField(max_length=120, choices=LESIONS, max_choices=5, blank=True, null=True) 
     bone_lesion_details = models.TextField(blank=True, null=True)
     lesion_image = models.ImageField(upload_to="images/")
     
@@ -29,13 +29,16 @@ class PostTherapy(models.Model):
     kidney_right = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
     dosimetry_image = models.ImageField(upload_to="images/")
     
+    def get_flatchoices(self):
+        return self.LESIONS
+
     def clean(self):
         if self.salivary_gland is not None and self.salivary_gland < 0:
-            raise ValidationError({'salivary_gland': 'Salivary Gland Cannot Be Negative.'})
+            raise ValidationError({'salivary_gland': 'Salivary Gland must be non-negative.'})
         if self.kidney_left is not None and self.kidney_left < 0:
-            raise ValidationError({'kidney_left': 'Left Kidney Cannot Be Negative.'})
+            raise ValidationError({'kidney_left': 'Left Kidney must be non-negative.'})
         if self.kidney_right is not None and self.kidney_right < 0:
-            raise ValidationError({'kidney_right': 'Right Kidney Cannot Be Negative.'})
+            raise ValidationError({'kidney_right': 'Right Kidney must be non-negative.'})
         super().clean()
 
     def save(self, *args, **kwargs):
