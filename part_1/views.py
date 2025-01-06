@@ -502,27 +502,16 @@ def addTherapy(request, slug):
 
 @login_required
 def editTherapy(request, slug, id):
-    try:
-        therapy = get_object_or_404(Therapy, id=id)
-        patient = get_object_or_404(Patient, slug=slug)  # Add this
-        
-        if request.method == "POST":
-            form = EditTherapy(request.POST, instance=therapy)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Therapy record updated successfully.')
-                return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
-        else:
-            form = EditTherapy(instance=therapy)
-            context = {
-                'form': form,
-                'patient': patient,  # Add patient to context
-                'therapy': therapy
-            }
-            return render(request, "part_2/edit-therapy.html", context)
-    except Exception as e:
-        messages.error(request, f'An error occurred: {str(e)}')
-        return redirect('patientList')
+    therapy = Therapy.objects.get(id=id)
+    if request.method == "POST":
+        form = EditTherapy(request.POST, instance=therapy)
+        if form.is_valid():
+            form.save()
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
+    else:
+        form = EditTherapy(instance=therapy)
+        context = {'form' : form}
+        return render(request, "part_2/edit-therapy.html", context)
 
 @login_required
 def deleteTherapy(request, slug, id):
@@ -555,27 +544,17 @@ def addPostTherapy(request, slug):
 
 @login_required
 def editPostTherapy(request, slug, id):
-    try:
-        patient = get_object_or_404(Patient, slug=slug)
-        post_therapy = get_object_or_404(PostTherapy, id=id)
-        
-        if request.method == "POST":
-            form = EditPostTherapy(request.POST, instance=post_therapy)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Post-therapy record updated successfully.')
-                return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
-        else:
-            form = EditPostTherapy(instance=post_therapy)
-            context = {
-                'form': form,
-                'patient': patient,  # Add patient to context
-                'post_therapy': post_therapy
-            }
-            return render(request, "part_3/edit-post-therapy.html", context)
-    except Exception as e:
-        messages.error(request, f'An error occurred: {str(e)}')
-        return redirect('patientList')
+    patient = Patient.objects.get(slug=slug)
+    post_therapy = PostTherapy.objects.get(id=id)
+    if request.method == "POST":
+        form = EditPostTherapy(request.POST, instance=post_therapy)
+        if form.is_valid():
+            form.save()
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
+    else:
+        form = EditPostTherapy(instance=post_therapy)
+        context = {'form' : form}
+        return render(request, "part_3/edit-post-therapy.html", context)
 
 @login_required
 def deletePostTherapy(request, slug, id):
@@ -608,27 +587,17 @@ def addFollowUp(request, slug):
 
 @login_required
 def editFollowUp(request, slug, id):
-    try:
-        follow_up = get_object_or_404(FollowUp, id=id)
-        patient = get_object_or_404(Patient, slug=slug)
-        
-        if request.method == "POST":
-            form = EditFollowUp(request.POST, instance=follow_up)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Follow-up record updated successfully.')
-                return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
-        else:
-            form = EditFollowUp(instance=follow_up)
-            context = {
-                'form': form,
-                'patient': patient,  # Add patient to context
-                'follow_up': follow_up
-            }
-            return render(request, "part_4/edit-follow-up.html", context)
-    except Exception as e:
-        messages.error(request, f'An error occurred: {str(e)}')
-        return redirect('patientList')
+    follow_up = FollowUp.objects.get(id=id)
+    patient = Patient.objects.get(slug=slug)
+    if request.method == "POST":
+        form = EditFollowUp(request.POST, instance=follow_up)
+        if form.is_valid():
+            form.save()
+        return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
+    else:
+        form = EditFollowUp(instance=follow_up)
+        context = {'form' : form}
+        return render(request, "part_4/edit-follow-up.html", context)
 
 @login_required
 def deleteFollowUp(request, slug, id):

@@ -10,7 +10,20 @@ class AddPostTherapy(ModelForm):
         if hours is not None and hours < 0:
             raise forms.ValidationError("Scan hours must be a non-negative value.")
         return hours
-
+    
+    LESIONS = (
+        ('Prostate', 'Prostate'),
+        ('Lymph Nodes', 'Lymph Nodes'),
+        ('Bones', 'Bones'),
+        ('Lungs', 'Lungs'),
+        ('Liver', 'Liver')
+    )
+    
+    lesions = forms.MultipleChoiceField(
+        choices=LESIONS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
     class Meta:
         model = PostTherapy
         fields = ['date_of_post_therapy','post_therapy_scan_hours','with_spect_ct','lesions','bone_lesion_details', 'lesion_image', 'salivary_gland', 'kidney_left', 'kidney_right', 'dosimetry_image']
