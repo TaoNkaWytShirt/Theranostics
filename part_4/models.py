@@ -22,21 +22,21 @@ class FollowUp(models.Model):
     slug = models.SlugField(null=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='fu_patient')
     psa = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    creatinine = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    wbc = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    rbc = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    hemoglobin = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    creatinine = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    wbc = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    rbc = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    hemoglobin = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     hematocrit = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     platelet = models.PositiveIntegerField(
         validators=[MaxValueValidator(999999)],
         blank=True,
         null=True,
     )
-    lactate_hydrogenase = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    alkaline_phosphatase = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    sgpt = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    sgot = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    bilirubins = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True) 
+    lactate_hydrogenase = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    alkaline_phosphatase = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    sgpt = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    sgot = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    bilirubins = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) 
 
     SALIVARY_GLAND_STATUS = (
         ('Normal', 'Normal'),
