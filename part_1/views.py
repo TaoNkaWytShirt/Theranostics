@@ -626,12 +626,13 @@ def editFollowUp(request, slug, id):
                 return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
         else:
             form = EditFollowUp(instance=follow_up)
-            context = {
-                'form': form,
-                'patient': patient,  # Add patient to context
-                'follow_up': follow_up
-            }
-            return render(request, "part_4/edit-follow-up.html", context)
+        
+        context = {
+            'form': form,
+            'patient': patient,  # Add patient to context
+            'follow_up': follow_up
+        }
+        return render(request, "part_4/edit-follow-up.html", context)
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
         return redirect('patientList')

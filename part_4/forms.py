@@ -42,8 +42,15 @@ class AddFollowUp(ModelForm):
 
     def clean_platelet(self):
         platelet = self.cleaned_data.get('platelet')
-        if platelet is not None and platelet < 0:
-            raise forms.ValidationError("Platelet count must be a non-negative value.")
+        if platelet is not None:
+            # Convert to string to count total digits
+            platelet_str = str(abs(platelet)).replace('.', '')
+            if len(platelet_str) > 7:
+                raise forms.ValidationError("Platelet count cannot exceed 7 digits in total.")
+            
+            if platelet < 0:
+                raise forms.ValidationError("Platelet count must be a non-negative value.")
+        
         return platelet
 
     def clean_lactate_hydrogenase(self):

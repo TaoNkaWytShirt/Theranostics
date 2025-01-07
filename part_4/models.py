@@ -1,5 +1,7 @@
 from django.db import models
 from part_1.models import Patient
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
 
 class FollowUp(models.Model):
     date_of_follow_up = models.DateField()
@@ -8,6 +10,13 @@ class FollowUp(models.Model):
         ('Intermediate Risk', 'Intermediate Risk'),
         ('High Risk', 'High Risk'),
     )
+
+    def validate_platelet_digits(value):
+        if value is not None:
+            platelet_str = str(abs(value)).replace('.', '')
+            if len(platelet_str) > 7:
+                raise ValidationError('Platelet count cannot exceed 7 digits in total.')
+
     id = models.AutoField(primary_key=True)
     slug = models.SlugField(null=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='fu_patient')
@@ -17,12 +26,16 @@ class FollowUp(models.Model):
     rbc = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     hemoglobin = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     hematocrit = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    platelet = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    platelet = models.PositiveIntegerField(
+        validators=[MaxValueValidator(999999)],
+        blank=True,
+        null=True,
+    )
     lactate_hydrogenase = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     alkaline_phosphatase = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     sgpt = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     sgot = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    bilirubins = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    bilirubins = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True) 
 
     SALIVARY_GLAND_STATUS = (
         ('Normal', 'Normal'),
@@ -37,7 +50,7 @@ class FollowUp(models.Model):
         ('No Metastasis', 'No Metastasis')
     )
     bone_metastasis_status = models.CharField(max_length=120, choices = BONE_METASTASIS_STATUS, blank=True, null=True)
-    bone_scan_image = models.ImageField(upload_to="images/")
+    bone_scan_image = models.ImageField(upload_to="images/", null=True)
     renal_scintigraphy = models.ImageField(upload_to="images/")
 
     GAPSMA = (

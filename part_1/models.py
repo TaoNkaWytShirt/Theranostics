@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.template.defaultfilters import slugify
 from datetime import datetime
+from django.core.validators import MaxValueValidator
 
 class Patient(models.Model):
     TYPE_TREATMENT = (
@@ -112,6 +113,13 @@ class Screening(models.Model):
         ('Intermediate Risk', 'Intermediate Risk'),
         ('High Risk', 'High Risk'),
     )
+
+    def validate_platelet_digits(value):
+        if value is not None:
+            platelet_str = str(abs(value)).replace('.', '')
+            if len(platelet_str) > 7:
+                raise ValidationError('Platelet count cannot exceed 7 digits in total.')
+
     id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='screening_patient')
     psa = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
@@ -120,7 +128,11 @@ class Screening(models.Model):
     rbc = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     hemoglobin = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     hematocrit = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    platelet = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    platelet = models.PositiveIntegerField(
+        validators=[MaxValueValidator(999999)],
+        blank=True,
+        null=True,
+    )
     lactate_hydrogenase = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     alkaline_phosphatase = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     sgpt = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
@@ -133,14 +145,14 @@ class Screening(models.Model):
         ('Right Obstruction', 'Right Obstruction')
     )
     salivary_gland_status = models.CharField(max_length=120, choices = SALIVARY_GLAND_STATUS)
-    salivary_gland_image = models.ImageField(upload_to="images/")
+    salivary_gland_image = models.ImageField(upload_to="images/", null=True)
 
     BONE_METASTASIS_STATUS = (
         ('Metastasis', 'Metastasis'),
         ('No Metastasis', 'No Metastasis')
     )
     bone_metastasis_status = models.CharField(max_length=120, choices = BONE_METASTASIS_STATUS, blank=True, null=True)
-    bone_scan_image = models.ImageField(upload_to="images/")
+    bone_scan_image = models.ImageField(upload_to="images/", null=True)
     renal_scintigraphy = models.ImageField(upload_to="images/")
 
     GAPSMA = (

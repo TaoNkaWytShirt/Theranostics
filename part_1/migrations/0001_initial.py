@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('rbc', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
                 ('hemoglobin', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
                 ('hematocrit', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
-                ('platelet', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
+                ('platelet', models.DecimalField(blank=True, decimal_places=2, max_digits=7, null=True)),
                 ('lactate_hydrogenase', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
                 ('alkaline_phosphatase', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
                 ('sgpt', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
