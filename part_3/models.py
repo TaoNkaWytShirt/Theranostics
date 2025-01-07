@@ -27,7 +27,7 @@ class PostTherapy(models.Model):
     salivary_gland = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
     kidney_left = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
     kidney_right = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(0)])
-    dosimetry_image = models.ImageField(upload_to="images/", blank=True, null=True)
+    dosimetry_image = models.ImageField(upload_to="images/")
     
 
     def clean(self):

@@ -43,13 +43,9 @@ class AddFollowUp(ModelForm):
     def clean_platelet(self):
         platelet = self.cleaned_data.get('platelet')
         if platelet is not None:
-            # Convert to string to count total digits
-            platelet_str = str(abs(platelet)).replace('.', '')
-            if len(platelet_str) > 7:
-                raise forms.ValidationError("Platelet count cannot exceed 7 digits in total.")
-            
-            if platelet < 0:
-                raise forms.ValidationError("Platelet count must be a non-negative value.")
+            # Ensure the platelet count is within the allowed range
+            if platelet < 0 or platelet > 999999:
+                raise forms.ValidationError("Platelet count must be between 0 and 999999.")
         
         return platelet
 

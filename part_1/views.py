@@ -564,10 +564,10 @@ def editPostTherapy(request, slug, id):
         post_therapy = get_object_or_404(PostTherapy, id=id)
         
         if request.method == "POST":
-            form = EditPostTherapy(request.POST, instance=post_therapy)
+            form = EditPostTherapy(request.POST, request.FILES, instance=post_therapy)
             if form.is_valid():
-                form.save()
                 messages.success(request, 'Post-therapy record updated successfully.')
+                form.save()
                 return HttpResponseRedirect(reverse_lazy('patientDetails', kwargs={"slug":slug}))
         else:
             form = EditPostTherapy(instance=post_therapy)
@@ -619,7 +619,7 @@ def editFollowUp(request, slug, id):
         patient = get_object_or_404(Patient, slug=slug)
         
         if request.method == "POST":
-            form = EditFollowUp(request.POST, instance=follow_up)
+            form = EditFollowUp(request.POST, request.FILES, instance=follow_up)
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Follow-up record updated successfully.')

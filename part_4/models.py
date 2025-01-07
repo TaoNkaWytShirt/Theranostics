@@ -17,6 +17,7 @@ class FollowUp(models.Model):
             if len(platelet_str) > 7:
                 raise ValidationError('Platelet count cannot exceed 7 digits in total.')
 
+
     id = models.AutoField(primary_key=True)
     slug = models.SlugField(null=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='fu_patient')

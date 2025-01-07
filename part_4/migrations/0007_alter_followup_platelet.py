@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='followup',
             name='platelet',
-            field=models.IntegerField(blank=True, null=True, validators=[part_4.models.FollowUp.validate_platelet_digits]),
+            field=models.IntegerField(blank=True, null=True),
         ),
     ]
