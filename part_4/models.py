@@ -36,7 +36,7 @@ class FollowUp(models.Model):
         ('Metastasis', 'Metastasis'),
         ('No Metastasis', 'No Metastasis')
     )
-    bone_metastasis_status = models.CharField(max_length=120, choices = BONE_METASTASIS_STATUS)
+    bone_metastasis_status = models.CharField(max_length=120, choices = BONE_METASTASIS_STATUS, blank=True, null=True)
     bone_scan_image = models.ImageField(upload_to="images/")
     renal_scintigraphy = models.ImageField(upload_to="images/")
 
@@ -44,7 +44,7 @@ class FollowUp(models.Model):
         ('GA-68', 'GA-68'),
         ('F-18 PSMA', 'F-18 PSMA')
     )
-    gapsma_choices = models.CharField(max_length=120, choices=GAPSMA)
+    gapsma_choices = models.CharField(max_length=120, choices=GAPSMA, blank=True, null=True)
     gapsma_img = models.ImageField(upload_to="images/")
 
 ##THIS SEGMENT NEEDS OPTIMIZATION##
