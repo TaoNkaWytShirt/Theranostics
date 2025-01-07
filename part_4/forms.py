@@ -317,6 +317,34 @@ class AddFollowUp(ModelForm):
             'sgot' : 'SGOT(units/L)', 
             'bilirubins' : 'Bilirubins(mg/dL)',
         }
+        def clean(self):
+            cleaned_data = super().clean()
+        
+            # List of all sections and their prefixes
+            sections = {
+                'gapsma': ['prostate', 'lymph_node', 'bone', 'brain', 'lung', 'liver'],
+                'fdgpetct': ['prostate', 'lymph_node', 'bone', 'brain', 'lung', 'liver']
+            }
+            
+            for prefix, parts in sections.items():
+                for part in parts:
+                    status = cleaned_data.get(f'{prefix}_{part}_lesion_status')
+                    location = cleaned_data.get(f'{prefix}_{part}_location')
+                    suv = cleaned_data.get(f'{prefix}_{part}_suv')
+                    size = cleaned_data.get(f'{prefix}_{part}_size')
+                    
+                    if status == 'Present':
+                        if not location:
+                            self.add_error(f'{prefix}_{part}_location', 
+                                f'Location is required when {part} lesion is present')
+                        if not suv:
+                            self.add_error(f'{prefix}_{part}_suv', 
+                                f'SUV is required when {part} lesion is present')
+                        if not size:
+                            self.add_error(f'{prefix}_{part}_size', 
+                                f'Size is required when {part} lesion is present')
+            
+            return cleaned_data
 
 class EditFollowUp(AddFollowUp):
     def __init__(self, *args, **kwargs):

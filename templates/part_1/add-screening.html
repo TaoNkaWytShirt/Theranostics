@@ -268,4 +268,138 @@
         </div>
     </div>
 </div>
+{% block javascript %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to handle field toggling
+        function toggleLesionFields(statusField, locationField, suvField, sizeField) {
+            const isPresent = statusField.value === 'Present';
+            const locationInput = document.querySelector(`[name="${locationField}"]`);
+            const suvInput = document.querySelector(`[name="${suvField}"]`);
+            const sizeInput = document.querySelector(`[name="${sizeField}"]`);
+            
+            // Disable/enable fields
+            locationInput.disabled = !isPresent;
+            suvInput.disabled = !isPresent;
+            sizeInput.disabled = !isPresent;
+            
+            // Clear values when disabled
+            if (!isPresent) {
+                locationInput.value = '';
+                suvInput.value = '';
+                sizeInput.value = '';
+            }
+            
+            // Update form-group appearance
+            const locationDiv = locationInput.closest('.form-group');
+            const suvDiv = suvInput.closest('.form-group');
+            const sizeDiv = sizeInput.closest('.form-group');
+            
+            if (!isPresent) {
+                locationDiv.style.opacity = '0.5';
+                suvDiv.style.opacity = '0.5';
+                sizeDiv.style.opacity = '0.5';
+            } else {
+                locationDiv.style.opacity = '1';
+                suvDiv.style.opacity = '1';
+                sizeDiv.style.opacity = '1';
+            }
+        }
+    
+        // Setup event listeners for both GAPSMA and FDG PET/CT sections
+        const allLesionSections = {
+            gapsma: [
+                {
+                    status: 'gapsma_prostate_lesion_status',
+                    location: 'gapsma_prostate_location',
+                    suv: 'gapsma_prostate_suv',
+                    size: 'gapsma_prostate_size'
+                },
+                {
+                    status: 'gapsma_lymph_node_lesion_status',
+                    location: 'gapsma_lymph_node_location',
+                    suv: 'gapsma_lymph_node_suv',
+                    size: 'gapsma_lymph_node_size'
+                },
+                {
+                    status: 'gapsma_bone_lesion_status',
+                    location: 'gapsma_bone_location',
+                    suv: 'gapsma_bone_suv',
+                    size: 'gapsma_bone_size'
+                },
+                {
+                    status: 'gapsma_brain_lesion_status',
+                    location: 'gapsma_brain_location',
+                    suv: 'gapsma_brain_suv',
+                    size: 'gapsma_brain_size'
+                },
+                {
+                    status: 'gapsma_lung_lesion_status',
+                    location: 'gapsma_lung_location',
+                    suv: 'gapsma_lung_suv',
+                    size: 'gapsma_lung_size'
+                },
+                {
+                    status: 'gapsma_liver_lesion_status',
+                    location: 'gapsma_liver_location',
+                    suv: 'gapsma_liver_suv',
+                    size: 'gapsma_liver_size'
+                }
+            ],
+            fdgpetct: [
+                {
+                    status: 'fdgpetct_prostate_lesion_status',
+                    location: 'fdgpetct_prostate_location',
+                    suv: 'fdgpetct_prostate_suv',
+                    size: 'fdgpetct_prostate_size'
+                },
+                {
+                    status: 'fdgpetct_lymph_node_lesion_status',
+                    location: 'fdgpetct_lymph_node_location',
+                    suv: 'fdgpetct_lymph_node_suv',
+                    size: 'fdgpetct_lymph_node_size'
+                },
+                {
+                    status: 'fdgpetct_bone_lesion_status',
+                    location: 'fdgpetct_bone_location',
+                    suv: 'fdgpetct_bone_suv',
+                    size: 'fdgpetct_bone_size'
+                },
+                {
+                    status: 'fdgpetct_brain_lesion_status',
+                    location: 'fdgpetct_brain_location',
+                    suv: 'fdgpetct_brain_suv',
+                    size: 'fdgpetct_brain_size'
+                },
+                {
+                    status: 'fdgpetct_lung_lesion_status',
+                    location: 'fdgpetct_lung_location',
+                    suv: 'fdgpetct_lung_suv',
+                    size: 'fdgpetct_lung_size'
+                },
+                {
+                    status: 'fdgpetct_liver_lesion_status',
+                    location: 'fdgpetct_liver_location',
+                    suv: 'fdgpetct_liver_suv',
+                    size: 'fdgpetct_liver_size'
+                }
+            ]
+        };
+    
+        // Initialize and set up event listeners for all sections
+        Object.values(allLesionSections).flat().forEach(section => {
+            const statusField = document.querySelector(`[name="${section.status}"]`);
+            if (statusField) {
+                // Initial state
+                toggleLesionFields(statusField, section.location, section.suv, section.size);
+                
+                // Add change event listener
+                statusField.addEventListener('change', function() {
+                    toggleLesionFields(this, section.location, section.suv, section.size);
+                });
+            }
+        });
+    });
+    </script>
+{% endblock %}
 {% endblock content %}
