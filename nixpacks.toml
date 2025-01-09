@@ -1,0 +1,2 @@
+[phases.setup]
+apt_pkgs = ["build-essential", "default-libmysqlclient-dev", "libssl-dev", "pkg-config", "gcc"]
