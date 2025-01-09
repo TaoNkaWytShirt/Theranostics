@@ -15,27 +15,30 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-$rgwk-p!8^kw#51!zz-svqix09akmq^1nrd875l!*ei3&--m$y'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '$rgwk-p!8^kw#51!zz-svqix09akmq^1nrd875l!*ei3&--m$y')
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = False
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['localhost']
+# Allowed Hosts & CSRF
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.railway.app',
+    'theranostics-group3-hi191-production.up.railway.app'
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://theranostics-group3-hi191-production.up.railway.app',
+    'https://*.railway.app'
+]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -68,9 +71,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 BOOTSTRAP3 = {
-  'javascript_in_head': True,
+    'javascript_in_head': True,
 }
+
 ROOT_URLCONF = 'Theranostics.urls'
 
 TEMPLATES = [
@@ -91,29 +96,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Theranostics.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'theranostics',
-        'USER': 'root',
-        'PASSWORD': '030404',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600
+    )
 }
 
-# Update database configuration from $DATABASE_URL if available
-db_from_env = dj_database_url.config(conn_max_age=500, default='')
-if db_from_env:
-    DATABASES['default'].update(db_from_env)
-
 # Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -129,37 +119,49 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#ALLOWED_HOSTS = ['web-production-3640.up.railway.app', '127.0.0.1']
-
 # Internationalization
-# https://docs.djangoproject.com/en/4.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
+RAILWAY_VOLUME_NAME = os.getenv('RAILWAY_VOLUME_NAME')
+RAILWAY_VOLUME_MOUNT_PATH = os.getenv('RAILWAY_VOLUME_MOUNT_PATH', '/app/media')
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.0/howto/static-files/
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+print(f"Your STATIC_ROOT: {STATIC_ROOT}")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# Media files
 MEDIA_URL = '/media/'
+MEDIA_ROOT = RAILWAY_VOLUME_MOUNT_PATH if not DEBUG else os.path.join(BASE_DIR, 'media')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+if not DEBUG:
+    print(f"Railway Volume Name: {RAILWAY_VOLUME_NAME}")
+    print(f"Railway Volume Mount Path: {RAILWAY_VOLUME_MOUNT_PATH}")
+    print(f"Media Root: {MEDIA_ROOT}")
+    
+    # Storage configuration for production
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+            "OPTIONS": {
+                "location": RAILWAY_VOLUME_MOUNT_PATH,
+                "base_url": MEDIA_URL,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
-
-ALLOWED_HOSTS = ['theranostics-production.up.railway.app', '127.0.0.1', 'localhost']
-CSRF_TRUSTED_ORIGINS = ['https://theranostics-production.up.railway.app']
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication
 LOGIN_REDIRECT_URL = 'patientList'
 LOGIN_URL = 'login'

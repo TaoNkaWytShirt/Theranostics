@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import user_passes_test as userPassesTest
 from django.core.exceptions import ValidationError
 from decimal import InvalidOperation
 
+
 def isSuperuser(user):
     return user.is_superuser
 

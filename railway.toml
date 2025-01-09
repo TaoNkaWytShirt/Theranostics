@@ -1,0 +1,10 @@
+[build]
+builder = "dockerfile"
+
+[mounts]
+source = "art-volume"
+destination = "/app/media"
+
+[deploy]
+release_command = "python manage.py migrate"
+startCommand = "sh -c 'gunicorn Theranostics.wsgi:application --bind 0.0.0.0:$PORT'"
