@@ -26,7 +26,7 @@ class AddTherapy(ModelForm):
             'diastolic': forms.NumberInput(attrs={'min': '0', 'type': 'number'}),
             'hr': forms.NumberInput(attrs={'min': '0', 'type': 'number'}),
             'rr': forms.NumberInput(attrs={'min': '0', 'type': 'number'}),
-            'saturation': forms.NumberInput(attrs={'min': '0', 'type': 'number'})
+            'saturation': forms.NumberInput(attrs={'min': '0', 'max': '100', 'type': 'number'})
         }
         labels = {
             'date_of_psma': 'Date of PSMA',
@@ -95,6 +95,7 @@ class EditTherapy(ModelForm):
         widgets = {
             'date_of_psma': forms.DateInput(attrs={'type': 'date'}),
             'date_therapy': forms.DateInput(attrs={'type': 'date'}),
+            'saturation': forms.NumberInput(attrs={'min': '0', 'max': '100', 'type': 'number'})
         }
         labels = {
             'date_of_psma': 'Date of PSMA',

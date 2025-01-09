@@ -453,7 +453,7 @@ class AddScreening(ModelForm):
             'wbc': forms.NumberInput(attrs={'min': '0', 'step': '0.1'}),
             'rbc': forms.NumberInput(attrs={'min': '0', 'step': '0.1'}),
             'hemoglobin': forms.NumberInput(attrs={'min': '0', 'step': '0.1'}),
-            'hematocrit': forms.NumberInput(attrs={'min': '0', 'step': '0.1'}),
+            'hematocrit': forms.NumberInput(attrs={'min': '0', 'max': '100', 'step': '0.1'}),
             'platelet': forms.NumberInput(attrs={'min': '0', 'step': '1'}),
             'lactate_hydrogenase': forms.NumberInput(attrs={'min': '0', 'step': '1'}),
             'alkaline_phosphatase': forms.NumberInput(attrs={'min': '0', 'step': '1'}),
